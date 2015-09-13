@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pixivly</title>
+  <link rel="stylesheet" href="/static/css/normalize.css">
+  <link rel="stylesheet" href="/static/css/main.css">
+  <style>
+    #totop {
+      position: fixed;
+      bottom: 2em;
+      right: 0.5em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <header>
+      <h1>Pixivly</h1>
+      <p>Daily Top Illustration On <a href="http://www.pixiv.net/" target="_blank">Pixiv.net</a></p><br>
+    </header>
+      <div role="main">
+        <ul id="container" class="tiles-wrap animated"></ul>
+      </div>
+  </div>
+  <div id="totop"><a title="to top"><img src="/static/img/scrollup.png"></a></div>
+  <p id="next" style="display: none">{{ date }}</p>
+
+  <script src="/static/js/jquery.min.js"></script>
+  <script src="/static/js/imagesloaded.pkgd.min.js"></script>
+  <script src="/static/js/wookmark.min.js"></script>
+  <script type="text/javascript">
+    (function ($) {
+      var $container = $('#container'),
+          isLoading = false,
+          wookmark;
+      // Initialize Wookmark
+      wookmark = new Wookmark('#container', {
+        offset: 5, // Optional, the distance between grid items
+        outerOffset: 10, // Optional, the distance to the containers border
+        itemWidth: 250 // Optional, the width of a grid item
+      });
+      var updateLayout = function() {
+        wookmark.initItems();
+        wookmark.layout(true);
+      }
+      var next = function() {
+        isLoading = true;
+        var date = $('#next').text();
+        $.get('/'+date, function(data, status) {
+          var html = '';
+          $.each(data.contents, function(index, element) {
+            html += '<li><a href="http://www.pixiv.net/member_illust.php?mode=medium&illust_id='+element.id+'" target="_blank"><img src="'+element.url+'" width="240"></a></li>';
+          });
+          $('#next').text(data.next);
+          if (html == '') {
+            // no data, next date
+            next();
+          } else {
+            $container.append(html);
+            $('#container').imagesLoaded()
+              .progress(updateLayout);
+            // can load after 3s
+            setTimeout(function() { isLoading = false; }, 3000);
+          }
+        });
+      }
+      $(document).bind('scroll', function() {
+        if (!isLoading) {
+          if ($(window).scrollTop()+$(window).height() > $(document).height()-100) {
+            next();
+          }
+        }
+        updateLayout();
+      });
+      next();
+    })(jQuery);
+  </script>
+  <script type="text/javascript">
+    (function($) {
+      var upperLimit = 1000;
+      var scrollElem = $('#totop');
+      // Scroll to top speed
+      var scrollSpeed = 500;
+      // Show and hide the scroll to top link based on scroll position
+      scrollElem.hide();
+      $(window).scroll(function () {
+          var scrollTop = $(document).scrollTop();
+          if ( scrollTop > upperLimit ) {
+              $(scrollElem).stop().fadeTo(300, 1); // fade back in
+          }else{
+              $(scrollElem).stop().fadeTo(300, 0); // fade out
+          }
+      });
+      // Scroll to top animation on click
+      $(scrollElem).click(function(){
+          $('html, body').animate({scrollTop:0}, scrollSpeed); return false;
+      });
+    })(jQuery);
+  </script>
+</body>
+</html>
