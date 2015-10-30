@@ -45,13 +45,17 @@
         wookmark.initItems();
         wookmark.layout(true);
       }
+      var pixivs = [];
       var next = function() {
         isLoading = true;
         var date = $('#next').text();
         $.get('/'+date, function(data, status) {
           var html = '';
           $.each(data.contents, function(index, element) {
-            html += '<li><a href="http://www.pixiv.net/member_illust.php?mode=medium&illust_id='+element.id+'" target="_blank"><img src="'+element.url+'" width="240"></a></li>';
+            if ($.inArray(element.id, pixivs) == -1) {
+              pixivs.push(element.id);
+              html += '<li><a href="http://www.pixiv.net/member_illust.php?mode=medium&illust_id='+element.id+'" target="_blank"><img src="'+element.url+'" width="240"></a></li>';
+            }
           });
           $('#next').text(data.next);
           if (html == '') {
