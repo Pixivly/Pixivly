@@ -1,0 +1,13 @@
+server {
+    listen 80;
+    server_name pixivly.luoyetx.com;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:///home/zhangjie/app/pixivly/pixivly.sock;
+    }
+
+    location /static {
+        alias /home/zhangjie/app/pixivly/static;
+    }
+}

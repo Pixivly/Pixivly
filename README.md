@@ -13,3 +13,9 @@ $ python app.py
 ```
 
 View Pixivly on [127.0.0.1:5000](http://127.0.0.1:5000).
+
+### Files
+
+- pixivly, configure for nginx
+- pixivly.service, script for systemctl
+- pixivly.ini, configure for uwsgi
