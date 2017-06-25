@@ -39,9 +39,12 @@ def fetch_json(date, mode, page):
     """
         Fetch json data at a specific date with mode and page
     """
-    URL_PATTERN = 'http://www.pixiv.net/ranking.php?content=illust&format=json&date={0}&mode={1}&p={2}'
+    URL_PATTERN = 'https://www.pixiv.net/ranking.php?content=illust&format=json&date={0}&mode={1}&p={2}'
     url = URL_PATTERN.format(date, mode, page)
-    res = requests.get(url)
+    try:
+        res = requests.get(url, timeout=3)
+    except requests.exceptions.Timeout as e:
+        return None
     if res.status_code != 200:
         return None
     else:
