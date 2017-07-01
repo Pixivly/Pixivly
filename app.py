@@ -44,13 +44,13 @@ def fetch_json(date, mode, page):
     URL_PATTERN = 'https://www.pixiv.net/ranking.php?content=illust&format=json&date={0}&mode={1}&p={2}'
     url = URL_PATTERN.format(date, mode, page)
     try:
-        header = {
+        headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
             'Host': 'www.pixiv.net',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'Accept-Encoding': 'gzip, deflate, br',
         }
-        res = requests.get(url, timeout=3)
+        res = requests.get(url, headers=headers, timeout=3)
     except requests.exceptions.Timeout as e:
         return None
     if res.status_code != 200:
