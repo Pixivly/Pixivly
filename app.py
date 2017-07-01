@@ -20,7 +20,7 @@ def date_json(date):
     try:
         date = datetime.datetime.strptime(date, '%Y%m%d').strftime('%Y%m%d')
     except:
-        return jsonify({})
+        return jsonify({'contents': [], 'next': '19990101'})
     json_file = 'media/%s.json'%(date)
     if not os.path.exists(json_file):
         json_data = fetch_json(date, 'daily', 1)
@@ -28,7 +28,9 @@ def date_json(date):
             with open(json_file, 'w') as f:
                 json.dump(json_data, f)
         else:
-            return jsonify({})
+            p_date = datetime.datetime.strptime(date, '%Y%m%d') - datetime.timedelta(days=1)
+            p_date = p_date.strftime('%Y%m%d')
+            return jsonify({'contents': [], 'next': p_date})
     else:
         with open(json_file, 'r') as f:
             json_data = json.load(f)
